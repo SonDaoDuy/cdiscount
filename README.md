@@ -5,15 +5,15 @@ kaggle cdiscount code
 
 1. *segnet_train.py*:
 
-	*loss function
-	*save model
+*loss function
+*save model
 
-2. *data_manipulate*: 
+2. *data_manipulate.py*: 
 
-	*loaddata into train set and test set
-	*split the data into binary class
-	*other manipulate data function if needed
+*loaddata into train set and test set
+*split the data into binary class
+*other manipulate data function if needed
 
-3. *segnet_predict*:
+3. *segnet_predict.py*:
 
-	*predict testing data
+*predict testing data
