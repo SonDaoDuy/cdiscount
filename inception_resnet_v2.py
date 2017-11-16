@@ -382,18 +382,20 @@ def main():
     nb_class = 5270
     #Create data
     train_gen, val_gen = Data.create_data()
-
+    print("Done create data!")
     #Create Model
-    model = InceptionResNetV2(include_top=True,weights='imagenet',input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
+    model = InceptionResNetV2(include_top=False,weights='imagenet',input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
     model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
     model.summary()
+    print("Done summary!!")
 
-    batch_size = 128
+    batch_size = 50
     nb_epoch = 10
     data_augmentation = True
 
     # Model saving callback
     checkpointer = ModelCheckpoint(filepath='stochastic_depth_cifar10.hdf5', verbose=1, save_best_only=True)
+    print("Done checkpoint!!")
 
     if not data_augmentation:
         print('Not using data augmentation.')

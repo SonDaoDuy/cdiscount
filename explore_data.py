@@ -72,8 +72,8 @@ class BSONIterator(Iterator):
 
             # Preprocess the image.
             x = img_to_array(img)
-            x = self.image_data_generator.random_transform(x)
-            x = self.image_data_generator.standardize(x)
+            # x = self.image_data_generator.random_transform(x)
+            # x = self.image_data_generator.standardize(x)
 
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x
@@ -193,6 +193,7 @@ def create_data():
     # one-hot encode the labels.
     categories_df["category_idx"] = pd.Series(range(len(categories_df)), index=categories_df.index)
 
+
     categories_df.to_csv("categories.csv")
     categories_df.head()
 
@@ -206,13 +207,14 @@ def create_data():
     train_offsets_df.to_csv("train_offsets.csv")
     print (len(train_offsets_df))
 
-    train_images_df, val_images_df = make_val_set(train_offsets_df, split_percentage=0.2, drop_percentage=0.9)
+    train_images_df, val_images_df = make_val_set(train_offsets_df, split_percentage=0.2, drop_percentage=0.0)
     train_images_df.head()
     val_images_df.head()
 
     print("Number of training images:", len(train_images_df))
     print("Number of validation images:", len(val_images_df))
     print("Total images:", len(train_images_df) + len(val_images_df))
+    print(len(train_images_df["category_idx"].unique()), len(val_images_df["category_idx"].unique()))
 
     train_images_df.to_csv("train_images.csv")
     val_images_df.to_csv("val_images.csv")
@@ -230,7 +232,7 @@ def create_data():
     num_classes = 5270
     num_train_images = len(train_images_df)
     num_val_images = len(val_images_df)
-    batch_size = 128
+    batch_size = 50
 
     # Tip: use ImageDataGenerator for data augmentation and preprocessing.
     train_datagen = ImageDataGenerator()
