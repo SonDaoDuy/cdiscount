@@ -321,7 +321,19 @@ def InceptionResNetV2(include_top=True,
     if include_top:
         # Classification block
         x = GlobalAveragePooling2D(name='avg_pool')(x)
-        x = Dense(classes, activation='softmax', name='predictions')(x)
+
+        # Add bottleneck
+        if bottleneck == "dim_128":
+            x = Dense(128, activation='relu', name='predictions')(x)
+            x = Dense(classes, activation='softmax', name='predictions')(x)
+        elif bottleneck == "dim_256":
+            x = Dense(256, activation='relu', name='predictions')(x)
+            x = Dense(classes, activation='softmax', name='predictions')(x)
+        elif bottleneck == "dim_512":
+            x = Dense(512, activation='relu', name='predictions')(x)
+            x = Dense(classes, activation='softmax', name='predictions')(x)
+        else:
+            x = Dense(classes, activation='softmax', name='predictions')(x)
     else:
         if pooling == 'avg':
             x = GlobalAveragePooling2D()(x)
