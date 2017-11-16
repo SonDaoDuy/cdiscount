@@ -25,3 +25,6 @@ kaggle cdiscount code
 4. *segnet_predict.py*:
 
 	-predict testing data
+
+5. train cdiscount by Inception Resnet v2
+	-python inception_resnet_v2.py

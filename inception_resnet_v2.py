@@ -367,11 +367,12 @@ def InceptionResNetV2(include_top=True,
     return model
 
 def main():
+    nb_class = 5270
     #Create data
     train_gen, val_gen = Data.create_data()
 
     #Create Model
-    model = InceptionResNetV2(include_top=True,weights='imagenet',input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=1000)
+    model = InceptionResNetV2(include_top=True,weights='imagenet',input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
     model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
     model.summary()
 
