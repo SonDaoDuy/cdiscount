@@ -57,6 +57,7 @@ class BSONIterator(Iterator):
                 image_row = self.images_df.iloc[j]
                 product_id = image_row["product_id"]
                 offset_row = self.offsets_df.loc[product_id]
+                # print(offset_row)
 
                 # Read this product's data from the BSON file.
                 self.file.seek(offset_row["offset"])
@@ -72,8 +73,8 @@ class BSONIterator(Iterator):
 
             # Preprocess the image.
             x = img_to_array(img)
-            # x = self.image_data_generator.random_transform(x)
-            # x = self.image_data_generator.standardize(x)
+            x = self.image_data_generator.random_transform(x)
+            x = self.image_data_generator.standardize(x)
 
             # Add the image and the label to the batch (one-hot encoded).
             batch_x[i] = x
@@ -88,7 +89,7 @@ class BSONIterator(Iterator):
     def next(self):
         with self.lock:
             index_array = next(self.index_generator)
-        return self._get_batches_of_transformed_samples(index_array)
+        return self._get_batches_of_transformed_samples(index_array[0])
 
 def make_category_tables():
     cat2idx = {}

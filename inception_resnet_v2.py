@@ -384,9 +384,9 @@ def main():
     train_gen, val_gen = Data.create_data()
     print("Done create data!")
     #Create Model
-    model = InceptionResNetV2(include_top=False,weights='imagenet',input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
+    model = InceptionResNetV2(include_top=True,weights=None,input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
     model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-    model.summary()
+    # model.summary()
     print("Done summary!!")
 
     batch_size = 50
@@ -424,7 +424,8 @@ def main():
         history = model.fit_generator(train_gen,
                                     steps_per_epoch=10, 
                                     nb_epoch=nb_epoch, verbose=1,
-                                    validation_data=val_gen,validation_steps = 10,  #num_val_images // batch_size,
+                                    validation_data=val_gen,
+                                    validation_steps = 10,  #num_val_images // batch_size,
                                     workers = 8,
                                     callbacks=[checkpointer])
 
