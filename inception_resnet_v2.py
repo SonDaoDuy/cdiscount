@@ -34,7 +34,7 @@ from keras.utils.data_utils import get_file
 from keras.utils import np_utils
 from keras.engine.topology import get_source_inputs
 from keras.optimizers import SGD
-from keras.callbacks import Callback, LearningRateScheduler, ModelCheckpoint, EarlyStopping
+from keras.callbacks import Callback, LearningRateScheduler, ModelCheckpoint, EarlyStopping, TensorBoard
 from keras.preprocessing.image import ImageDataGenerator
 import imagenet_utils
 from imagenet_utils import _obtain_input_shape
@@ -381,7 +381,7 @@ def InceptionResNetV2(include_top=True,
 def main():
     nb_class = 5270
     #Create data
-    train_gen, val_gen = Data.create_data()
+    train_gen, val_gen = Data.create_data(G=1)
     print("Done create data!")
     #Create Model
     model = InceptionResNetV2(include_top=True,weights=None,input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
@@ -394,6 +394,8 @@ def main():
     data_augmentation = True
 
     # Model saving callback
+    tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0,
+                          write_graph=True, write_images=False)
     checkpointer = ModelCheckpoint(filepath='stochastic_depth_cifar10.hdf5', verbose=1, save_best_only=True)
     print("Done checkpoint!!")
 
@@ -427,7 +429,7 @@ def main():
                                     validation_data=val_gen,
                                     validation_steps = 10,  #num_val_images // batch_size,
                                     workers = 8,
-                                    callbacks=[checkpointer])
+                                    callbacks=[checkpointer, tensorboard])
 
 if __name__ == "__main__":
     main()

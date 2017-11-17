@@ -64,7 +64,7 @@ class BSONIterator(Iterator):
                 item_data = self.file.read(offset_row["length"])
 
             # Grab the image from the product.
-            item = bson.BSON.decode(item_data)
+            item = bson.BSON(item_data).decode()
             img_idx = image_row["img_idx"]
             bson_img = item["imgs"][img_idx]["picture"]
 
@@ -179,7 +179,7 @@ def make_val_set(df, split_percentage=0.2, drop_percentage=0.):
     val_df = pd.DataFrame(val_list, columns=columns)   
     return train_df, val_df
 
-def create_data():
+def create_data(G=1):
     data_dir = ""
     train_bson_path = os.path.join(data_dir, "train_example.bson")
     num_train_products = 82
@@ -239,11 +239,11 @@ def create_data():
     train_datagen = ImageDataGenerator()
     train_gen = BSONIterator(train_bson_file, train_images_df, train_offsets_df, 
                             num_classes, train_datagen, lock,
-                            batch_size=batch_size, shuffle=True)
+                            batch_size=batch_size*G, shuffle=True)
 
     val_datagen = ImageDataGenerator()
     val_gen = BSONIterator(train_bson_file, val_images_df, train_offsets_df,
                         num_classes, val_datagen, lock,
-                        batch_size=batch_size, shuffle=True)
+                        batch_size=batch_size*G, shuffle=True)
 
     return train_gen, val_gen
