@@ -105,3 +105,4 @@ venv.bak/
 
 #model
 .hdf5
+.csv
