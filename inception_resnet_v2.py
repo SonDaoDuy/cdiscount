@@ -379,6 +379,7 @@ def InceptionResNetV2(include_top=True,
     return model
 
 def main():
+    file_save = 'model_kaggle.h5'
     nb_class = 5270
     #Create data
     train_gen, val_gen = Data.create_data(G=1)
@@ -430,6 +431,8 @@ def main():
                                     validation_steps = 10,  #num_val_images // batch_size,
                                     workers = 8,
                                     callbacks=[checkpointer, tensorboard])
+
+        model.save_weights(file_save)
 
 if __name__ == "__main__":
     main()
