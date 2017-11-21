@@ -182,7 +182,7 @@ def make_val_set(df, split_percentage=0.2, drop_percentage=0.):
 def create_data(G=1):
     data_dir = ""
     train_bson_path = os.path.join(data_dir, "train_example.bson")
-    num_train_products = 82
+    num_train_products = 7069896
     global categories_df
     global cat2idx
     global idx2cat
@@ -233,7 +233,7 @@ def create_data(G=1):
     num_classes = 5270
     num_train_images = len(train_images_df)
     num_val_images = len(val_images_df)
-    batch_size = 50
+    batch_size = 32
 
     # Tip: use ImageDataGenerator for data augmentation and preprocessing.
     train_datagen = ImageDataGenerator()
