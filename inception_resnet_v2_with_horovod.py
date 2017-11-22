@@ -15,6 +15,7 @@ from __future__ import absolute_import
 import warnings
 import os
 import argparse
+import ConfigParser
 
 import numpy as np
 import keras
@@ -48,6 +49,15 @@ import horovod.keras as hvd
 import explore_data as Data
 
 BASE_WEIGHT_URL = 'https://github.com/fchollet/deep-learning-models/releases/download/v0.7/'
+
+#Read hyperparameter
+config = ConfigParser.ConfigParser()
+config.readfp(open(r'solver.prototxt'))
+nb_class = int(config.get('My Section', 'num_classes'))
+batch_size = int(config.get('My Section', 'batch_size'))
+nb_epoch = int(config.get('My Section', 'nb_epoch'))
+data_augmentation = bool(config.get('My Section', 'data_augmentation'))
+lr = float(config.get('My Section', 'lr'))
 
 # Initialize Horovod.
 hvd.init()
@@ -349,21 +359,7 @@ def InceptionResNetV2(include_top=True,
         inputs = img_input
 
     # Create model
-    # check to see if we are compiling using just a single GPU
-    if G <= 1:
-        print("[INFO] training with 1 GPU...")
-        model = Model(inputs, x, name='inception_resnet_v2')
-    else:
-        print("[INFO] training with {} GPUs...".format(G))
-        
-        # we'll store a copy of the model on *every* GPU and then combine
-	    # the results from the gradient updates on the CPU
-        with tf.device("/cpu:0"):
-		    # initialize the model
-            model = Model(inputs, x, name='inception_resnet_v2')
-
-            # make the model parallel
-            model = multi_gpu_model(model, gpus=G)
+    model = Model(inputs, x, name='inception_resnet_v2')
 
     # Load weights
     if weights == 'imagenet':
@@ -394,7 +390,6 @@ def InceptionResNetV2(include_top=True,
     return model
 
 def main():
-    nb_class = 5270
     #Create data
     train_gen, val_gen = Data.create_data(G=1)
 
@@ -402,18 +397,14 @@ def main():
     model = InceptionResNetV2(include_top=True,weights=None,input_tensor=None,input_shape=None,pooling=None,bottleneck=None,classes=nb_class)
     
     # Adjust learning rate based on number of GPUs.
-    opt = keras.optimizers.Adadelta(lr=1.0 * hvd.size())
+    opt = keras.optimizers.Adadelta(lr=lr * hvd.size())
 
     # Add Horovod Distributed Optimizer.
     opt = hvd.DistributedOptimizer(opt)
 
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
     model.summary()
-
-    batch_size = 32
-    nb_epoch = 10
-    data_augmentation = True
-
+    
     # Model saving callback
     callbacks = [
         # Broadcast initial variable states from rank 0 to all other processes.

@@ -5,6 +5,7 @@ import pandas as pd
 import multiprocessing as mp
 import bson
 import struct
+import ConfigParser
 
 import keras
 from keras.preprocessing.image import load_img, img_to_array
@@ -25,6 +26,14 @@ from subprocess import check_output
 global categories_df
 global cat2idx
 global idx2cat
+
+#Read hyperparameter
+config = ConfigParser.ConfigParser()
+config.readfp(open(r'solver.prototxt'))
+data_dir = config.get('My Section', 'data_dir')
+num_train_products = int(config.get('My Section', 'num_train_products'))
+num_classes = int(config.get('My Section', 'num_classes'))
+batch_size = int(config.get('My Section', 'batch_size'))
 
 class BSONIterator(Iterator):
     def __init__(self, bson_file, images_df, offsets_df, num_class,
@@ -179,10 +188,9 @@ def make_val_set(df, split_percentage=0.2, drop_percentage=0.):
     val_df = pd.DataFrame(val_list, columns=columns)   
     return train_df, val_df
 
-def create_data(G=1):
-    data_dir = ""
+def create_data(G=1): 
     train_bson_path = os.path.join(data_dir, "train_example.bson")
-    num_train_products = 7069896
+
     global categories_df
     global cat2idx
     global idx2cat
@@ -230,11 +238,9 @@ def create_data(G=1):
     train_bson_file = open(train_bson_path, "rb")
     lock = threading.Lock()
 
-    num_classes = 5270
     num_train_images = len(train_images_df)
     num_val_images = len(val_images_df)
-    batch_size = 32
-
+    
     # Tip: use ImageDataGenerator for data augmentation and preprocessing.
     train_datagen = ImageDataGenerator()
     train_gen = BSONIterator(train_bson_file, train_images_df, train_offsets_df, 
