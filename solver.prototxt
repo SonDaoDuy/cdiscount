@@ -1,0 +1,8 @@
+[My Section]
+data_dir = ''
+num_train_products = 7069896
+num_classes = 5270
+batch_size = 32
+nb_epoch = 24
+data_augmentation = True
+lr = 1.0
