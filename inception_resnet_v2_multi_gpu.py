@@ -387,6 +387,7 @@ def main():
     nb_class = 5270
     batch_size = 64
     nb_epoch = 1
+    G = 4
     file_save = "cdiscount-256-epoch-1.h5"
     data_augmentation = True
 
