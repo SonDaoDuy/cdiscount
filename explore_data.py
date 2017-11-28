@@ -5,7 +5,6 @@ import pandas as pd
 import multiprocessing as mp
 import bson
 import struct
-import ConfigParser
 
 import keras
 from keras.preprocessing.image import load_img, img_to_array
@@ -26,14 +25,6 @@ from subprocess import check_output
 global categories_df
 global cat2idx
 global idx2cat
-
-#Read hyperparameter
-config = ConfigParser.ConfigParser()
-config.readfp(open(r'solver.prototxt'))
-data_dir = config.get('My Section', 'data_dir')
-num_train_products = int(config.get('My Section', 'num_train_products'))
-num_classes = int(config.get('My Section', 'num_classes'))
-batch_size = int(config.get('My Section', 'batch_size'))
 
 class BSONIterator(Iterator):
     def __init__(self, bson_file, images_df, offsets_df, num_class,
@@ -189,7 +180,12 @@ def make_val_set(df, split_percentage=0.2, drop_percentage=0.):
     return train_df, val_df
 
 def create_data(G=1): 
-    train_bson_path = os.path.join(data_dir, "train_example.bson")
+    data_dir = "data"
+    num_train_products = 7069896
+    num_classes = 5270
+    batch_size = 64
+
+    train_bson_path = os.path.join(data_dir, "train.bson")
 
     global categories_df
     global cat2idx
